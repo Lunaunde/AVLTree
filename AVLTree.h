@@ -11,12 +11,26 @@ class AVLTree
 	private:
 		struct Node;
 		Node *root;
+        bool static balanced;
         void deleteTree(Node *&node);
 		int getHeight(Node *node);
+        int calculateHeight(Node* node);
+        void leftRotate(Node *&node);
+        void rightRotate(Node *&node);
+        void leftRightRotate(Node *&node);
+        void rightLeftRotate(Node *&node);
         void insert(const T data, Node *&root);
+
+        void safelyleftRotate(Node *&node);
+        void safelyrightRotate(Node *&node);
+
+        bool search(const T data, Node *node);
+        void print(Node *node);
 
 	public:
         AVLTree();
         ~AVLTree();
         void insert(const T data);
+        bool search(const T data);
+        void print();
 };

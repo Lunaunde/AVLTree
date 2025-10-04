@@ -11,7 +11,9 @@ class AVLTree
 	private:
 		struct Node;
 		Node *root;
-        bool static balanced;
+        bool balanced;
+        bool success;
+        T result;
         void deleteTree(Node *&node);
 		int getHeight(Node *node);
         int calculateHeight(Node* node);
@@ -19,7 +21,14 @@ class AVLTree
         void rightRotate(Node *&node);
         void leftRightRotate(Node *&node);
         void rightLeftRotate(Node *&node);
+
+        void balanceInsert(Node *&root);
+        void balanceRemove(Node *&root);
+
+        void FMAR(Node *&root); // 删除最小节点
+
         void insert(const T data, Node *&root);
+        void remove(const T data, Node*& root);
 
         void safelyleftRotate(Node *&node);
         void safelyrightRotate(Node *&node);
@@ -30,7 +39,13 @@ class AVLTree
 	public:
         AVLTree();
         ~AVLTree();
-        void insert(const T data);
+
+        bool insert(const T data);
         bool search(const T data);
+        bool remove(const T data);
+
+        void checkBalance(Node* node, const std::string& path);
+        void checkBalance();
+
         void print();
 };

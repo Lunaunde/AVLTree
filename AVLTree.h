@@ -49,3 +49,5 @@ class AVLTree
 
         void print();
 };
+
+#include "AVLTree.impl.h"

@@ -11,4 +11,4 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
 
 # 本工程所有cpp文件编译链接
-add_executable(avlTree "main.cpp" "AVLTree.h" "AVLTree.cpp")
+add_executable(avlTree "main.cpp" "AVLTree.h" "AVLTree.impl.h")

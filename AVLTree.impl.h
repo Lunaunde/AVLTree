@@ -1,5 +1,6 @@
-﻿#include <iostream>
-#include "AVLTree.h"
+﻿#ifndef AVLTREE_IMPL_H
+#define AVLTREE_IMPL_H
+#include <iostream>
 
 template <typename T>
 struct AVLTree<T>::Node
@@ -294,7 +295,7 @@ void AVLTree<T>::safelyrightRotate(Node*& node)
 template <typename T>
 bool AVLTree<T>::search(const T data, Node* node)
 {
-	std::cout << "|data: " << node->data << " height: " << node->height << std::endl;
+	//std::cout << "|data: " << node->data << " height: " << node->height << std::endl;
 	if (node == nullptr)
 		return false;
 	else if (node->data == data)
@@ -384,4 +385,4 @@ void AVLTree<T>::checkBalance()
 	checkBalance(root, "");
 }
 
-template class AVLTree<int>;
+#endif

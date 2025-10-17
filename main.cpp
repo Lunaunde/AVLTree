@@ -4,16 +4,17 @@
 #include <random>
 #include <chrono>
 #include "AVLTree.h"
+#include "BST.h"
+#include "StdAVLTree.h"
 
 // 性能测试函数
 void performanceTest(int dataSize) {
 	std::cout << "数据量: " << dataSize << std::endl;
 
-	// 生成随机 double 数据
-	std::vector<double> data(dataSize);
+	std::vector<int> data(dataSize);
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_real_distribution<double> dist(1.0, dataSize * 10.0);
+	std::uniform_int_distribution<int> dist(0, INT_MAX);
 
 	for (int i = 0; i < dataSize; ++i) {
 		data[i] = dist(gen);
@@ -21,14 +22,43 @@ void performanceTest(int dataSize) {
 
 	// 创建一个整数随机数生成器用于索引
 	std::uniform_int_distribution<int> indexDist(0, dataSize - 1);
-	std::chrono::milliseconds avlInsertTime, avlSearchTime, avlDeleteTime, rbInsertTime, rbSearchTime, rbDeleteTime;
+	std::chrono::milliseconds avlInsertTime, avlSearchTime, avlDeleteTime, rbInsertTime, rbSearchTime, rbDeleteTime, stdAVLTreeInsertTime, stdAVLTreeSearchTime, stdAVLTreeDeleteTime;
 
+	{
+		// 测试 std::set (红黑树)
+		auto start = std::chrono::high_resolution_clock::now();
+		std::set<int> rbTree;
+		for (int val : data) {
+			rbTree.insert(val);
+		}
+		auto end = std::chrono::high_resolution_clock::now();
+		rbInsertTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+		// 测试查找性能
+		start = std::chrono::high_resolution_clock::now();
+		for (int i = 0; i < dataSize / 10; ++i) {
+			rbTree.find(data[indexDist(gen)]);  // 使用整数随机索引
+		}
+		end = std::chrono::high_resolution_clock::now();
+		rbSearchTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+		// 测试删除性能
+		start = std::chrono::high_resolution_clock::now();
+		for (int i = 0; i < dataSize / 10; ++i) {
+			rbTree.erase(data[indexDist(gen)]);  // 使用整数随机索引
+		}
+		end = std::chrono::high_resolution_clock::now();
+		rbDeleteTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+		std::cout << "红黑树 - 插入: " << rbInsertTime.count() << "ms, "
+			<< "查找: " << rbSearchTime.count() << "ms, "
+			<< "删除: " << rbDeleteTime.count() << "ms" << std::endl;
+	}
 
 	// 测试 AVL 树
 	{
 		auto start = std::chrono::high_resolution_clock::now();
-		AVLTree<double> avlTree;
-		for (double val : data) {
+		AVLTree<int> avlTree;
+		for (int val : data) {
 			avlTree.insert(val);
 		}
 		auto end = std::chrono::high_resolution_clock::now();
@@ -55,39 +85,36 @@ void performanceTest(int dataSize) {
 	}
 
 	{
-		// 测试 std::set (红黑树)
 		auto start = std::chrono::high_resolution_clock::now();
-		std::set<double> rbTree;
-		for (double val : data) {
-			rbTree.insert(val);
+		StdAVLTree<int> stdAVLTree;
+        for (int val : data) {
+			stdAVLTree.insert(val);
 		}
-		auto end = std::chrono::high_resolution_clock::now();
-		rbInsertTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+        auto end = std::chrono::high_resolution_clock::now();
+        stdAVLTreeInsertTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
-		// 测试查找性能
-		start = std::chrono::high_resolution_clock::now();
-		for (int i = 0; i < dataSize / 10; ++i) {
-			rbTree.find(data[indexDist(gen)]);  // 使用整数随机索引
-		}
-		end = std::chrono::high_resolution_clock::now();
-		rbSearchTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+        start = std::chrono::high_resolution_clock::now();
+        for (int i = 0; i < dataSize / 10; ++i) {
+            stdAVLTree.search(data[indexDist(gen)]);  // 使用整数随机索引
+        }
+        end = std::chrono::high_resolution_clock::now();
+        stdAVLTreeSearchTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
-		// 测试删除性能
-		start = std::chrono::high_resolution_clock::now();
-		for (int i = 0; i < dataSize / 10; ++i) {
-			rbTree.erase(data[indexDist(gen)]);  // 使用整数随机索引
-		}
-		end = std::chrono::high_resolution_clock::now();
-		rbDeleteTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+        start = std::chrono::high_resolution_clock::now();
+        for (int i = 0; i < dataSize / 10; ++i) {
+            stdAVLTree.remove(data[indexDist(gen)]);  // 使用整数随机索引
+        }
+        end = std::chrono::high_resolution_clock::now();
+        stdAVLTreeDeleteTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+        std::cout << "StdAVLTree - 插入: " << stdAVLTreeInsertTime.count() << "ms, "
+            << "查找: " << stdAVLTreeSearchTime.count() << "ms, "
+            << "删除: " << stdAVLTreeDeleteTime.count() << "ms" << std::endl;
+
 	}
 	// 输出结果
 
-	std::cout << "红黑树 - 插入: " << rbInsertTime.count() << "ms, "
-		<< "查找: " << rbSearchTime.count() << "ms, "
-		<< "删除: " << rbDeleteTime.count() << "ms" << std::endl;
-
-	std::cout << "AVL/红黑树 插入时间比: "
-		<< static_cast<double>(avlInsertTime.count()) / rbInsertTime.count() << std::endl;
+	//std::cout << "AVL/红黑树 插入时间比: "
+	//	<< static_cast<double>(avlInsertTime.count()) / rbInsertTime.count() << std::endl;
 	std::cout << "----------------------------------------" << std::endl;
 
 }
@@ -121,45 +148,54 @@ void sequentialTest(int dataSize) {
 	std::cout << "========================================" << std::endl;
 }
 
-// 测试浮点数精度问题
-void precisionTest() {
-	std::cout << "浮点数精度测试..." << std::endl;
-
-	AVLTree<double> tree;
-
-	// 测试相近的浮点数
-	tree.insert(1.0000001);
-	tree.insert(1.0000002);
-	tree.insert(1.0000003);
-
-	std::cout << "查找 1.0000001: " << (tree.search(1.0000001) ? "找到" : "未找到") << std::endl;
-	std::cout << "查找 1.0000002: " << (tree.search(1.0000002) ? "找到" : "未找到") << std::endl;
-	std::cout << "查找 1.0000003: " << (tree.search(1.0000003) ? "找到" : "未找到") << std::endl;
-
-	// 测试删除
-	tree.remove(1.0000002);
-	std::cout << "删除后查找 1.0000002: " << (tree.search(1.0000002) ? "找到" : "未找到") << std::endl;
-
-	std::cout << "========================================" << std::endl;
-}
-
 int main() {
-	std::cout << "开始 double 类型性能对比测试..." << std::endl;
-	std::cout << "========================================" << std::endl;
 
-	// 测试不同数据量
-	std::vector<int> testSizes = { 1000, 10000, 100000 , 1000000 , 5000000,10000000 };
+	for (int k = 0; k < 3; k++)
+	{
+		int inputSize, data;
+		std::vector<int> datas;
+		std::cout << "BST数据量: ";
+		std::cin >> inputSize;
+		BST<int> bst;
+		for (int i = 0; i < inputSize; i++)
+		{
+			std::cin >> data;
+			datas.push_back(data);
+		}
+		if (k < 2)
+		{
+			for(int i = 0; i < inputSize; i++)
+                bst.insert(datas[i]);
+            std::cout << "BST前序遍历: "<<std::endl;
+			bst.POTPrint();
+            std::cout << "BST中序遍历: "<<std::endl;
+            bst.MOTPrint();
+            std::cout << "BST后序遍历: "<<std::endl;
+            bst.LOTPrint();
+		}
+		else
+        {
+			for (int i = 0; i < inputSize; i++)
+			{
+                bst.insert(datas[i]);
+				bst.LOTPrint();
+			}
+			std::cout << "查找: ";
+            std::cin >> data;
+            std::cout << "查找结果: " << bst.search(data) << std::endl;
+			
+			for (int i = inputSize - 1; i >= 0; i--)
+			{
+				bst.remove(datas[i]);
+                bst.LOTPrint();
+			}
+        }
+	}
 
+	//测试不同数据量
+	std::vector<int> testSizes = { 100000,1000000,10000000 };
 	for (int size : testSizes) {
 		performanceTest(size);
 	}
-
-	//std::cout << "顺序数据最坏情况测试..." << std::endl;
-	//sequentialTest(10000);
-	//sequentialTest(50000);
-
-	// 浮点数精度测试
-	precisionTest();
-
 	return 0;
 }

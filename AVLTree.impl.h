@@ -1,6 +1,4 @@
-﻿#ifndef AVLTREE_IMPL_H
-#define AVLTREE_IMPL_H
-#include <iostream>
+﻿#include <iostream>
 
 template <typename T>
 struct AVLTree<T>::Node
@@ -8,7 +6,7 @@ struct AVLTree<T>::Node
 	T data;
 	Node* left;
 	Node* right;
-	int height;
+	short height;
 
 	Node(const T& val) : data(val), left(nullptr), right(nullptr), height(-1) {}
 };
@@ -26,7 +24,7 @@ void AVLTree<T>::deleteTree(Node*& node)
 }
 
 template <typename T>
-int AVLTree<T>::getHeight(Node* node)
+short AVLTree<T>::getHeight(Node* node)
 {
 	if (node == nullptr)
 		return -1;
@@ -35,7 +33,7 @@ int AVLTree<T>::getHeight(Node* node)
 }
 
 template <typename T>
-int AVLTree<T>::calculateHeight(Node* node)
+short AVLTree<T>::calculateHeight(Node* node)
 {
 	int leftHeight = getHeight(node->left);
 	int rightHeight = getHeight(node->right);
@@ -87,7 +85,7 @@ void AVLTree<T>::rightLeftRotate(Node*& node)
 template <typename T>
 void AVLTree<T>::balanceInsert(Node*& node)
 {
-	int balance = getHeight(node->left) - getHeight(node->right);
+	short balance = getHeight(node->left) - getHeight(node->right);
 	int nodeHeight = node->height;
 	if (balance > 1)
 	{
@@ -129,7 +127,7 @@ void AVLTree<T>::balanceInsert(Node*& node)
 template <typename T>
 void AVLTree<T>::balanceRemove(Node*& node)
 {
-	int balance = getHeight(node->left) - getHeight(node->right);
+	short balance = getHeight(node->left) - getHeight(node->right);
 	int nodeHeight = node->height;
 	if (balance > 1)
 	{
@@ -182,10 +180,10 @@ void AVLTree<T>::balanceRemove(Node*& node)
 }
 
 template <typename T>
-void AVLTree<T>::FMAR(Node*& node)
+void AVLTree<T>::findAndRemoveMin(Node*& node) // Find Minimum and Remove
 {
 	if (node->left != nullptr)
-		FMAR(node->left);
+		findAndRemoveMin(node->left);
 	else
 	{
 		result = node->data;
@@ -264,7 +262,7 @@ void AVLTree<T>::remove(const T data, Node*& node)
 		}
 		default:
 		{
-			FMAR(node->right);
+			findAndRemoveMin(node->right);
 			node->data = result;
 			break;
 		}
@@ -293,17 +291,16 @@ void AVLTree<T>::safelyrightRotate(Node*& node)
 }
 
 template <typename T>
-bool AVLTree<T>::search(const T data, Node* node)
+void AVLTree<T>::search(const T data, Node* node)
 {
-	//std::cout << "|data: " << node->data << " height: " << node->height << std::endl;
 	if (node == nullptr)
-		return false;
-	else if (node->data == data)
-		return true;
+		return;
 	else if (node->data > data)
-		return search(data, node->left);
-	else
-		return search(data, node->right);
+		search(data, node->left);
+	else if (node->data < data)
+		search(data, node->right);
+	else 
+        success = true;
 }
 
 template <typename T>
@@ -344,13 +341,15 @@ bool AVLTree<T>::insert(const T data)
 template <typename T>
 bool AVLTree<T>::search(const T data)
 {
-	return search(data, this->root);
+	success = false;
+	search(data, this->root);
+	return success;
 }
 
 template <typename T>
 bool AVLTree<T>::remove(const T data)
 {
-	success = true;
+	success = false;
 	remove(data, this->root);
 	return success;
 }
@@ -384,5 +383,3 @@ void AVLTree<T>::checkBalance()
 {
 	checkBalance(root, "");
 }
-
-#endif

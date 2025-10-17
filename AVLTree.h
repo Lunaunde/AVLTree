@@ -1,3 +1,7 @@
+//自己写的优化AVL树
+#ifndef AVLTREE_H
+#define AVLTREE_H 
+
 template<typename T>
 class AVLTree
 {
@@ -15,8 +19,8 @@ class AVLTree
         bool success;
         T result;
         void deleteTree(Node *&node);
-		int getHeight(Node *node);
-        int calculateHeight(Node* node);
+		short getHeight(Node *node);
+        short calculateHeight(Node* node);
         void leftRotate(Node *&node);
         void rightRotate(Node *&node);
         void leftRightRotate(Node *&node);
@@ -25,7 +29,7 @@ class AVLTree
         void balanceInsert(Node *&root);
         void balanceRemove(Node *&root);
 
-        void FMAR(Node *&root); // 删除最小节点
+        void findAndRemoveMin(Node *&root); // 删除最小节点并存入result
 
         void insert(const T data, Node *&root);
         void remove(const T data, Node*& root);
@@ -33,7 +37,7 @@ class AVLTree
         void safelyleftRotate(Node *&node);
         void safelyrightRotate(Node *&node);
 
-        bool search(const T data, Node *node);
+        void search(const T data, Node *node);
         void print(Node *node);
 
 	public:
@@ -51,3 +55,5 @@ class AVLTree
 };
 
 #include "AVLTree.impl.h"
+
+#endif

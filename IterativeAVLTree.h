@@ -27,16 +27,22 @@ private:
 	short getHeight(Node* node);
 	short calculateHeight(Node* node);
 
-	void leftRotate(Node*& node);
-	void rightRotate(Node*& node);
-	void leftRightRotate(Node*& node);
-	void rightLeftRotate(Node*& node);
+	void leftRotate(Node** nodePtr);
+	void rightRotate(Node** nodePtr);
+	void leftRightRotate(Node** nodePtr);
+	void rightLeftRotate(Node** nodePtr);
 
-	bool balanceInsert(Node** node);
+	bool balanceInsert(Node** nodePtr);
+	bool balanceRemove(Node** nodePtr);
+
+	T findAndRemoveMin(Node** nodePtr)
 public:
 	IterativeAVLTree();
 	~IterativeAVLTree();
+
 	bool insert(const T data);
+	bool search(const T data);
+	bool remove(const T data);
 };
 
 #include "IterativeAVLTree.impl.h"

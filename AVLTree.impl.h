@@ -230,18 +230,16 @@ void AVLTree<T>::remove(const T data, Node*& node)
 	else
 	{
 		balanced = false;
-		switch (getHeight(node))
-		{
-		case 0:
+		if (getHeight(node)==0)
 		{
 			delete node;
 			node = nullptr;
 			success = true;
 			return;
 		}
-		case 1:
+		else
 		{
-			if (node->left != nullptr)
+			if (node->right == nullptr)
 			{
 				node->data = node->left->data;
 				delete node->left;
@@ -252,20 +250,9 @@ void AVLTree<T>::remove(const T data, Node*& node)
 			}
 			else
 			{
-				node->data = node->right->data;
-				delete node->right;
-				node->right = nullptr;
-				success = true;
-				node->height = 0;
+				findAndRemoveMin(node->right);
+				node->data = result;
 			}
-			return;
-		}
-		default:
-		{
-			findAndRemoveMin(node->right);
-			node->data = result;
-			break;
-		}
 		}
 	}
 

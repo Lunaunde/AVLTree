@@ -38,6 +38,8 @@ class AVLTree
         void safelyrightRotate(Node *&node);
 
         void search(const T data, Node *node);
+        bool fastSearch(const T data,Node *node);
+
         void print(Node *node);
 
 	public:
@@ -46,6 +48,7 @@ class AVLTree
 
         bool insert(const T data);
         bool search(const T data);
+        bool fastSearch(const T data);
         bool remove(const T data);
 
         void checkBalance(Node* node, const std::string& path);

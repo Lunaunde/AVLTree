@@ -150,7 +150,7 @@ void sequentialTest(int dataSize) {
 
 int main() {
 
-	for (int k = 0; k < 3; k++)
+	/*for (int k = 0; k < 3; k++)
 	{
 		int inputSize, data;
 		std::vector<int> datas;
@@ -190,7 +190,7 @@ int main() {
                 bst.LOTPrint();
 			}
         }
-	}
+	}*/
 
 	//测试不同数据量
 	std::vector<int> testSizes = { 100000,1000000,10000000 };

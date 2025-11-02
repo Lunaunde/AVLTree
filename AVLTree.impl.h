@@ -166,7 +166,7 @@ void AVLTree<T>::balanceRemove(Node*& node)
 		}
 		else
 		{
-            leftRotate(node);
+			leftRotate(node);
 			node->left->height = (node->height);
 			(node->height)++;
 		}
@@ -230,7 +230,7 @@ void AVLTree<T>::remove(const T data, Node*& node)
 	else
 	{
 		balanced = false;
-		if (getHeight(node)==0)
+		if (getHeight(node) == 0)
 		{
 			delete node;
 			node = nullptr;
@@ -241,12 +241,10 @@ void AVLTree<T>::remove(const T data, Node*& node)
 		{
 			if (node->right == nullptr)
 			{
-				node->data = node->left->data;
-				delete node->left;
-				node->left = nullptr;
-				success = true;
-				if (node->right == nullptr)
-					node->height = 0;
+				Node* temp = node->left;
+				delete node;
+				node = temp;
+				success = true
 			}
 			else
 			{
@@ -258,7 +256,7 @@ void AVLTree<T>::remove(const T data, Node*& node)
 
 	if (balanced)
 		return;
-    balanceRemove(node);
+	balanceRemove(node);
 }
 
 template <typename T>
@@ -286,8 +284,23 @@ void AVLTree<T>::search(const T data, Node* node)
 		search(data, node->left);
 	else if (node->data < data)
 		search(data, node->right);
-	else 
-        success = true;
+	else
+		success = true;
+}
+
+template <typename T>
+bool AVLTree<T>::fastSearch(const T data, Node* node)
+{
+	while (node != nullptr)
+	{
+		if (node->data > data)
+			node = node->left;
+		else if (node->data < data)
+			node = node->right;
+		else
+			return true;
+	}
+    return false;
 }
 
 template <typename T>
@@ -334,6 +347,12 @@ bool AVLTree<T>::search(const T data)
 }
 
 template <typename T>
+bool AVLTree<T>::fastSearch(const T data)
+{
+	return fastSearch(data, this->root);
+}
+
+template <typename T>
 bool AVLTree<T>::remove(const T data)
 {
 	success = false;
@@ -366,7 +385,7 @@ void AVLTree<T>::checkBalance(Node* node, const std::string& path) {
 }
 
 template <typename T>
-void AVLTree<T>::checkBalance() 
+void AVLTree<T>::checkBalance()
 {
 	checkBalance(root, "");
 }
